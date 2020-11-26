@@ -1,4 +1,4 @@
-package main
+package command
 
 import (
 	"log"
@@ -8,18 +8,18 @@ import (
 )
 
 type Par struct {
-	commands []string
-	kill     chan bool
+	Commands []string
+	Kill     chan bool
 }
 
-func (p *Par) run() {
+func (p *Par) Run() {
 	var commands []*exec.Cmd
 
-	for _, command := range p.commands {
+	for _, command := range p.Commands {
 		commands = append(commands, RunCommand(command))
 	}
 
-	<-p.kill
+	<-p.Kill
 
 	for _, cmd := range commands {
 		KillCommand(cmd)

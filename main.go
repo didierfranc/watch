@@ -4,6 +4,9 @@ import (
 	"log"
 	"os"
 	"os/signal"
+
+	c "github.com/didierfranc/watch/pkg/command"
+	w "github.com/didierfranc/watch/pkg/watch"
 )
 
 func main() {
@@ -14,24 +17,24 @@ func main() {
 	interrupt := make(chan os.Signal)
 	signal.Notify(interrupt, os.Interrupt)
 
-	changes, close := WatchFolder(os.Args[1])
+	changes, close := w.WatchFolder(os.Args[1])
 	defer close()
 
-	par := &Par{
-		kill:     make(chan bool),
-		commands: os.Args[2:],
+	par := &c.Par{
+		Kill:     make(chan bool),
+		Commands: os.Args[2:],
 	}
 
-	go par.run()
+	go par.Run()
 
 	for {
 		select {
 		case <-interrupt:
-			par.kill <- true
+			par.Kill <- true
 			os.Exit(0)
 		case <-changes:
-			par.kill <- true
-			go par.run()
+			par.Kill <- true
+			go par.Run()
 		}
 	}
 }
