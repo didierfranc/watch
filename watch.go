@@ -39,9 +39,7 @@ func WatchFolder(path string) (chan fsnotify.Event, func() error) {
 			case event := <-watcher.Events:
 				switch event.Op {
 				case fsnotify.Remove:
-					if isDir(event.Name) {
-						watcher.Remove(event.Name)
-					}
+					watcher.Remove(event.Name)
 				case fsnotify.Create:
 					if isDir(event.Name) {
 						watcher.Add(event.Name)
